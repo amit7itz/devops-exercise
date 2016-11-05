@@ -1,0 +1,16 @@
+---
+#- name: stopping previus big-service instances
+#  shell: pkill -f big-service.py
+#  ignore_errors: True
+
+- name: copy big-service script to remote machine
+  copy: src=big-service.py dest=/app/big-service/ owner=root group=root mode=755
+
+- name: copy service file
+  copy: src=big-service.conf dest=/etc/init/ owner=root group=root mode=755
+
+- name: create symlink for autocomplete
+  file: src=/etc/init/big-service.conf dest=/etc/init.d/big-service owner=root group=root state=link
+
+- name: running the big-service
+  service: name=big-service pattern=/app/big-service/big-service.py state=restarted
