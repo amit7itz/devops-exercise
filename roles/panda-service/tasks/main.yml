@@ -1,0 +1,15 @@
+---
+- name: copy panda-service script to remote machine
+  copy: src=panda-service.py dest=/app/panda-service/ owner=root group=root mode=755
+
+- name: copy resources to remote machine
+  copy: src=resources dest=/app/panda-service/resources owner=root group=root mode=755
+
+- name: copy service file
+  copy: src=panda-service.conf dest=/etc/init/ owner=root group=root mode=755
+
+- name: create symlink for autocomplete
+  file: src=/etc/init/panda-service.conf dest=/etc/init.d/panda-service owner=root group=root state=link
+
+- name: running the panda-service
+  service: name=panda-service pattern=/app/panda-service/panda-service.py state=restarted

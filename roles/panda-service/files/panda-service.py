@@ -4,7 +4,7 @@ import BaseHTTPServer
 import SimpleHTTPServer
 import os
 
-RESOURCES_DIR_PATH = './resources'
+RESOURCES_DIR_PATH = os.path.join(os.path.dirname(__file__),'resources')
 SERVER_ADDRESS = ('0.0.0.0', 8888)
 
 def start_http_server(dir_path, server_port):

@@ -11,3 +11,4 @@
   sudo: yes
   roles:
     - { role: big-service, tags: big-service }
+    - { role: panda-service, tags: panda-service } 
