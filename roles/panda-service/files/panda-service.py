@@ -2,6 +2,7 @@
 
 import BaseHTTPServer
 import os
+import mimetypes
 
 SERVER_ADDRESS = ('0.0.0.0', 8888)
 RESOURCES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'resources'))
@@ -26,7 +27,11 @@ class PandaHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.wfile.write("</body></html>")
         else:
             f = open(real_path, 'rb')
-            self.send_header("Content-type", self.extension_map[real_path.split('.')[-1]])
+            if not mimetypes.inited:
+                mimetypes.init()
+            self.extension_map = mimetypes.types_map.copy()
+            _, file_extension = os.path.splitext(real_path)
+            self.send_header("Content-type", self.extension_map[file_extension])            
             fs = os.fstat(f.fileno())
             self.send_header("Content-Length", str(fs[6]))
             self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
