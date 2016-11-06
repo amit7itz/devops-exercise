@@ -1,11 +1,10 @@
 #! /usr/bin/env python2.7
 
 import BaseHTTPServer
-from glob import glob
 import os
 
-SERVER_ADDRESS = ('0.0.0.0', 8887)
-RESOURCES_DIR = os.path.join(os.path.dirname(__file__), 'resources')
+SERVER_ADDRESS = ('0.0.0.0', 8888)
+RESOURCES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'resources'))
 
 class PandaHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
@@ -16,23 +15,23 @@ class PandaHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def do_GET(self):
         self.send_response(200)
-        if self.path == '/':
+        real_path = os.path.join(RESOURCES_DIR, self.path[1:])
+        if not os.path.isfile(real_path):
             self.send_header("Content-type", 'text/html')
             self.end_headers()
             self.wfile.write("<html><head><title>BigService cool page</title></head>")
             self.wfile.write("<body>")
-            for f in glob(os.path.join(RESOURCES_DIR, '*')):
+            for f in os.listdir(RESOURCES_DIR):
                 self.wfile.write("<a href=\"{path}\">{path}</a></br>".format(path=f))
             self.wfile.write("</body></html>")
         else:
-            real_path = os.path.join(RESOURCES_DIR, os.path.basename(self.path))
             f = open(real_path, 'rb')
             self.send_header("Content-type", 'image/png')
             fs = os.fstat(f.fileno())
             self.send_header("Content-Length", str(fs[6]))
             self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
             self.end_headers()
-            return f
+            self.wfile.write(f.read())
         
 def main():
     http_server = BaseHTTPServer.HTTPServer(SERVER_ADDRESS, PandaHTTPHandler)
