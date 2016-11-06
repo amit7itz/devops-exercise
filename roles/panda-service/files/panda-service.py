@@ -26,7 +26,7 @@ class PandaHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.wfile.write("</body></html>")
         else:
             f = open(real_path, 'rb')
-            self.send_header("Content-type", 'image/png')
+            self.send_header("Content-type", self.extension_map[real_path.split('.')[-1]])
             fs = os.fstat(f.fileno())
             self.send_header("Content-Length", str(fs[6]))
             self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
