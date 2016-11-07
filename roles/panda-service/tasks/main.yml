@@ -9,12 +9,10 @@
   ignore_errors: True
 
 - name: copy files and folders to remote machine
-  copy: src={{item}} dest=/app/panda-service/ owner=root group=root mode=755
-  with_fileglob:
-      - ./*
+  copy: src=./ dest=/app/{{service_name}}/ owner=root group=root mode=755
 
-- name: copy service file
-  copy: src={{service_name}}.conf dest=/etc/init/ owner=root group=root mode=755
+- name: write service file
+  copy: content="start on filesystem\nexec {{service_name}}.conf" dest=/etc/init/ owner=root group=root mode=755
 
 - name: create symlink for autocomplete
   file: src=/etc/init/{{service_name}}.conf dest=/etc/init.d/{{service_name}} owner=root group=root state=link
