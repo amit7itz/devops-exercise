@@ -34,7 +34,7 @@ class BigHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.wfile.write(self.PAGE_TEMPLATE.format(visitor_number=visitor_number))
 
     @staticmethod
-    def _get_visitor_number(self):
+    def _get_visitor_number():
         """
         increase the get requests counter by one and return its value
         """
