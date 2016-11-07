@@ -1,0 +1,4 @@
+---
+
+service_name: panda-service
+script_name: panda-service.py

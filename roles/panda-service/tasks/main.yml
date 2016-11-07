@@ -1,0 +1,21 @@
+---
+
+- name: stopping the {{service_name}}
+  service: name={{service_name}} pattern=/app/{{service_name}}/{{script_name}} state=stopped
+  ignore_errors: True
+
+- name: delete old service directory
+  shell: rm -rf /app/{{service_name}}
+  ignore_errors: True
+
+- name: copy files and folders to remote machine
+  copy: src=./ dest=/app/{{service_name}}/ owner=root group=root mode=755
+
+- name: write service file
+  copy: content="start on filesystem\nexec /app/{{service_name}}/{{script_name}}" dest=/etc/init/{{service_name}}.conf owner=root group=root mode=755
+
+- name: create symlink for autocomplete
+  file: src=/etc/init/{{service_name}}.conf dest=/etc/init.d/{{service_name}} owner=root group=root state=link
+
+- name: running the {{service_name}}
+  service: name={{service_name}} pattern=/app/{{service_name}}/{{script_name}} state=started
