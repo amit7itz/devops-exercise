@@ -15,7 +15,7 @@ class PandaHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     PAGE_TEMPLATE = """
     <html>
         <head>
-            <title>BigService cool page</title>
+            <title>PandaService cool page</title>
         </head>
         <body>
             {body}
