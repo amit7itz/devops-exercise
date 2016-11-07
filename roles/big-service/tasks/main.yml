@@ -1,16 +1,23 @@
 ---
-#- name: stopping previus big-service instances
-#  shell: pkill -f big-service.py
-#  ignore_errors: True
 
-- name: copy big-service script to remote machine
-  copy: src=big-service.py dest=/app/big-service/ owner=root group=root mode=755
+- name: stopping the {{service_name}}
+  service: name={{service_name}} pattern=/app/{{service_name}}/{{script_name}} state=stopped
+  ignore_errors: True
+
+- name: delete old service directory
+  shell: rm -rf /app/{{service_name}}
+  ignore_errors: True
+
+- name: copy files and folders to remote machine
+  copy: src={{item}} dest=/app/panda-service/ owner=root group=root mode=755
+  with_fileglob:
+      - ./*
 
 - name: copy service file
-  copy: src=big-service.conf dest=/etc/init/ owner=root group=root mode=755
+  copy: src={{service_name}}.conf dest=/etc/init/ owner=root group=root mode=755
 
 - name: create symlink for autocomplete
-  file: src=/etc/init/big-service.conf dest=/etc/init.d/big-service owner=root group=root state=link
+  file: src=/etc/init/{{service_name}}.conf dest=/etc/init.d/{{service_name}} owner=root group=root state=link
 
-- name: running the big-service
-  service: name=big-service pattern=/app/big-service/big-service.py state=restarted
+- name: running the {{service_name}}
+  service: name={{service_name}} pattern=/app/{{service_name}}/{{script_name}} state=started
